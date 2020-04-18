@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from prdl import PrDlCrawl, PrDlSearch
+from .prdl import PrDlCrawl, PrDlSearch
 import sys
 
 def checkCommandArcguments():

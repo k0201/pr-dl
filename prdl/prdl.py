@@ -11,8 +11,8 @@ import os
 from slugify import slugify
 import pycurl
 import re
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json
 from clint.textui import puts, colored
 from PIL import Image
@@ -69,7 +69,7 @@ class PrDlPodcast(object):
         if (os.path.isfile(fpath)):
             os.remove(fpath)
         if self.thumbnail_url:
-            urllib.urlretrieve(self.thumbnail_url, fpath)
+            urllib.request.urlretrieve(self.thumbnail_url, fpath)
             size = (200, 200)
             image = Image.open(fpath)
             image.thumbnail(size, Image.ANTIALIAS)
@@ -92,7 +92,7 @@ class PrDlPodcast(object):
                         encoding=3,
                         mime=self.thumbnail_mime,
                         type=3,
-                        desc=u'Cover',
+                        desc='Cover',
                         data=open(self.thumbnail_file_name).read()
                     )
                 )
@@ -108,13 +108,13 @@ class PrDlPodcast(object):
                     audiofile.tag = eyed3.id3.Tag()
                     audiofile.tag.file_info = eyed3.id3.FileInfo(self.file_name)
                 comments = self.description +"\n\n"
-                comments += u"Url pliku mp3: " + unicode(self.url) + "\n\n"
+                comments += "Url pliku mp3: " + str(self.url) + "\n\n"
                 audiofile.tag.comments.set(
-                    comments + u"Pobrane przy pomocy skryptu https://github.com/bohdanbobrowski/pr-dl")
-                audiofile.tag.artist = u"Polskie Radio"
-                audiofile.tag.album = u"polskieradio.pl"
-                audiofile.tag.genre = u"Speech"
-                audiofile.tag.title = unicode(self.title.decode('utf-8'))
+                    comments + "Pobrane przy pomocy skryptu https://github.com/bohdanbobrowski/pr-dl")
+                audiofile.tag.artist = "Polskie Radio"
+                audiofile.tag.album = "polskieradio.pl"
+                audiofile.tag.genre = "Speech"
+                audiofile.tag.title = str(self.title.decode('utf-8'))
                 audiofile.tag.audio_file_url = self.url
                 audiofile.tag.track_num = self.track_number
                 audiofile.tag.save(version=ID3_V2_4, encoding='utf-8')
@@ -200,7 +200,7 @@ class PrDl(object):
 class PrDlSearch(PrDl):
     def __init__(self, phrase, save_all = False, forced_search = False):
         self.phrase = phrase
-        self.search_str = unicode(phrase.decode('utf-8').upper())
+        self.search_str = str(phrase.decode('utf-8').upper())
         self.forced_search = forced_search
         self.save_all = save_all
 
@@ -211,7 +211,7 @@ class PrDlSearch(PrDl):
         for w in response['response']['results']:
             if 'files' in w:
                 for file in w['files']:
-                    if file['name'] not in files_dodane and file['type'] == u'Plik dźwiękowy':
+                    if file['name'] not in files_dodane and file['type'] == 'Plik dźwiękowy':
                         file['thumbnail_url'] = w['thumbnail_url']
                         file['lead'] = w['lead']
                         files.append(file)
@@ -222,16 +222,16 @@ class PrDlSearch(PrDl):
                 p['description'] = p['description']
                 if len(p['description']) == 0:
                     p['description'] = p['name'].replace('.mp3', '')
-                description = unicode(p['description'].upper())
-                lead = unicode(p['lead'].upper())
+                description = str(p['description'].upper())
+                lead = str(p['lead'].upper())
                 if self.search_str in description or self.search_str in lead:
                     files_checked.append(p)
             files = files_checked
         return files
 
     def start(self):
-        search_url = 'http://apipr.polskieradio.pl/api/elasticArticles?sort_by=date&sort_order=desc&offset=0&limit=500&query=' + urllib.quote(self.phrase)
-        response = urllib.urlopen(search_url)
+        search_url = 'http://apipr.polskieradio.pl/api/elasticArticles?sort_by=date&sort_order=desc&offset=0&limit=500&query=' + urllib.parse.quote(self.phrase)
+        response = urllib.request.urlopen(search_url)
         response = response.read()
         response = json.loads(response)
         if 'response' in response and 'results' in response['response'] and len(response['response']['results']) > 0:
@@ -330,9 +330,9 @@ class PrDlCrawl(PrDl):
                     title = titles[x]
                     description = descriptions[x]
                     title = self.fillEmptyTitle(title, url, html)
-                    title = urllib2.unquote(title)
+                    title = urllib.parse.unquote(title)
                     if title.find('.mp3') > -1:
-                        title = urllib2.unquote(description);
+                        title = urllib.parse.unquote(description);
                     fname = title
                     title = title.replace('&quot;', '"')
                     title = title.replace('""', '"')
@@ -362,7 +362,7 @@ class PrDlCrawl(PrDl):
 
     def start(self):
         self.drawSeparator('#')
-        print ("Analizowany url: " + self.url)
+        print(("Analizowany url: " + self.url))
         html = self.getWebPageContent(self.url)
         links = self.getLinks(html)
         titles = self.getTitles(html)
