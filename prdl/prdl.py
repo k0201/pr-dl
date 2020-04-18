@@ -119,7 +119,7 @@ class PrDlPodcast(object):
                 audiofile.tag.track_num = self.track_number
                 audiofile.tag.save(version=ID3_V2_4, encoding='utf-8')
             except Exception as error:
-                print 'Nie udalo się otagować pliku mp3...'
+                print ('Nie udalo się otagować pliku mp3...')
 
 
 class PrDl(object):
@@ -142,7 +142,7 @@ class PrDl(object):
         separator = ''
         for x in range(0, columns):
             separator = separator + sign
-        print separator
+        print (separator)
 
     def confirmSave(self, answer):
         if (answer == 1):
@@ -173,7 +173,7 @@ class PrDl(object):
         if thumb != "":
             puts(colored.white('Miniaturka: ' + thumb))
         if (os.path.isfile(podcast.file_name)):
-            print '[!] Plik o tej nazwie istnieje w katalogu docelowym'
+            print ('[!] Plik o tej nazwie istnieje w katalogu docelowym')
         else:
             if (self.confirmSave(self.save_all) == 1):
                 download(url, './' + podcast.file_name)
@@ -362,7 +362,7 @@ class PrDlCrawl(PrDl):
 
     def start(self):
         self.drawSeparator('#')
-        print "Analizowany url: " + self.url
+        print ("Analizowany url: " + self.url)
         html = self.getWebPageContent(self.url)
         links = self.getLinks(html)
         titles = self.getTitles(html)

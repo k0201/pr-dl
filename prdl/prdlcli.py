@@ -15,10 +15,10 @@ def checkValidUrl():
     return False
 
 def printHelp():
-    print "PRDL - Polskie Radio Downloader"
-    print ""
-    print "python pr-dl-cli.pl [url] [-t] [-f]"
-    print ""
+    print( "PRDL - Polskie Radio Downloader" )
+    print( "")
+    print( "python pr-dl-cli.pl [url] [-t] [-f]")
+    print( "")
 
 def main():
     if checkCommandArcguments():
